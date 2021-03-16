@@ -1,0 +1,31 @@
+---
+- name: A simple playbook to test ansible.cfg
+  hosts: bugs daffy elmer
+  gather_facts: no
+  connection: ssh
+
+  vars_files:
+          - vars/looneyusers.yml
+          - vars/looneygroups.yml
+
+  tasks:
+
+  # the command module issues a command on the remote host
+  - name: create a new group called Funky Town
+    group:
+            name: "{{ item }}"
+            state: present
+    become: yes
+    loop: "{{ groups1 }}"
+
+  - name: add new users to the group 'funkytown'
+    user:
+            name: "{{ item }}"
+            comment: very import user account for testing
+            state: present
+            shell: bin/bash
+            system: no
+            createhome: yes
+            group: funkytown
+    become: yes
+    loop: "{{ users1 }}"
